@@ -1,5 +1,5 @@
 """
-    Project: Countries_CSV-to-HTML-and-LaTeX-formats
+    Project: TQL-Text-Query-Language
     Purpose: Academical
     Description: Contains a class using lexer, to find fields on a csv file.
 
@@ -13,13 +13,13 @@
 """
 
 # Imports
-from country import Country
+from csv_record import CSV_Record
 from my_utils import slurp
 import ply.lex as plex
 import copy
 
 
-class CountryLexer:
+class CSVRecordLexer:
     """ Uses lexer, to find fields on a csv file. """
 
     # Tokens - defines different rules for regular expressions
@@ -52,12 +52,12 @@ class CountryLexer:
         self.column_index = 0
 
         # Current country being read
-        self.current_country = Country()
+        self.current_record = CSV_Record()
 
             # -  Data Structures - #
 
-        # All countries read
-        self.countries = []
+        # All records read
+        self.records = []
 
     def process(self):
         """ Processes a csv file.
@@ -122,14 +122,14 @@ class CountryLexer:
 
         else:
             # Add value to list of columns
-            self.current_country.columns.append(t.value)
+            self.current_record.columns.append(t.value)
 
     # Normal fields - No quotation marks
     def t_header_NFIELD(self, t):
         r'[-\w ()\'#]+'
 
         # Add value to list of columns
-        self.current_country.columns.append(t.value)
+        self.current_record.columns.append(t.value)
 
 
     # Fields containing quotation marks
@@ -137,7 +137,7 @@ class CountryLexer:
         r'"[^"]+"'
 
         # Add value to list of columns
-        self.current_country.columns.append(t.value)
+        self.current_record.columns.append(t.value)
 
     # Commas
     def t_header_COMMA(self, t):
@@ -176,16 +176,16 @@ class CountryLexer:
 
         else:
             # Set value of a class attribute
-            # ( Something close to this -> current_country.columns[column_index] = t.value )
-            setattr(self.current_country, Country.columns[self.column_index], t.value)
+            # ( Something close to this -> current_record.columns[column_index] = t.value )
+            setattr(self.current_record, CSV_Record.columns[self.column_index], t.value)
 
     # Normal fields - No quotation marks
     def t_body_NFIELD(self, t):
         r'[-\w &()\'\.#]+'
 
         # Set value of a class attribute
-        # ( Something close to this -> current_country.columns[column_index] = t.value )
-        setattr(self.current_country, Country.columns[self.column_index], t.value)
+        # ( Something close to this -> current_record.columns[column_index] = t.value )
+        setattr(self.current_record, CSV_Record.columns[self.column_index], t.value)
 
     # Fields containing quotation marks
     def t_body_QMFIELD(self, t):
@@ -194,8 +194,8 @@ class CountryLexer:
         # Remove " " on start and end of string
         modified_token = t.value[1:-1]
         # Set value of a class attribute
-        # ( Something close to this -> current_country.columns[column_index] = t.value )
-        setattr(self.current_country, Country.columns[self.column_index], modified_token)
+        # ( Something close to this -> current_record.columns[column_index] = t.value )
+        setattr(self.current_record, CSV_Record.columns[self.column_index], modified_token)
 
     # Commas
     def t_body_COMMA(self, t):
@@ -211,10 +211,10 @@ class CountryLexer:
         self.column_index = 0
 
         # Store read country
-        self.countries.append(copy.deepcopy(self.current_country))
+        self.records.append(copy.deepcopy(self.current_record))
 
         # Set all class's variables to None
-        self.current_country.clean()
+        self.current_record.clean()
 
     # End Of File
     def t_body_eof(self, t):
@@ -226,13 +226,13 @@ class CountryLexer:
         """
 
         # If current object is not empty, than it must be included on list
-        if not self.current_country.is_empty():
+        if not self.current_record.is_empty():
 
             # Store read country
-            self.countries.append(copy.deepcopy(self.current_country))
+            self.records.append(copy.deepcopy(self.current_record))
 
             # Set all class's variables to None
-            self.current_country.clean()
+            self.current_record.clean()
 
 
     #    ==>    COMMENT    <==

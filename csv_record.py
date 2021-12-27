@@ -1,7 +1,7 @@
-""" Defines a country structure, from the csv file.
-    Each field represents a column. """
-class Country:
 
+class CSV_Record:
+    """ Defines a CSV file structure.
+        Each field represents a column. """
     # Contains all fields' name (each column name)
     columns = []
 
