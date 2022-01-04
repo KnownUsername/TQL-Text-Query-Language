@@ -24,12 +24,6 @@ class CommandsLexer:
         for token in iter(self.lexer.token, None):
             pass
 
-    #def input(self, string):
-      #  self.lexer.input(string)
-        # Tokens' processing
-       # for token in iter(self.lexer.token, None):
-        #    pass
-
 
     #   --- Token Rules ---   #
 
