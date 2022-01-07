@@ -17,3 +17,7 @@ class CommandsEval:
         CommandsEval.loaded_tables[table_name] = csvr.records
 
         return True
+
+    @staticmethod
+    def discard():
+        pass
