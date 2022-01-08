@@ -1,5 +1,5 @@
 import pandas as pd
-
+import os.path
 
 class CommandsEval:
 
@@ -23,7 +23,7 @@ class CommandsEval:
 
         # Check if name of table, is already being used
         if table_name in CommandsEval.loaded_tables.keys():
-            raise Exception(f'There is already loaded a table with the name: {table_name}')
+            raise Exception(f'There is already loaded, a table with the name: {table_name}')
 
         # Store table on tables' dictionary
         CommandsEval.loaded_tables[table_name] = table
@@ -44,10 +44,37 @@ class CommandsEval:
 
     @staticmethod
     def show(table_name):
+        """ Presents table on console"""
+
         # Table must be loaded - on tables' dictionary
         if table_name in CommandsEval.loaded_tables:
             print(CommandsEval.loaded_tables[table_name])
         return True
+
+    @staticmethod
+    def save(table_name, filename):
+        """ Saves table on a csv file"""
+
+        # Check if file is loaded
+        if table_name not in CommandsEval.loaded_tables:
+            raise Exception('Table is not loaded')
+
+        # Check if file's extension is csv
+        if not CommandsEval.is_csv(filename):
+            raise Exception('File extension is not csv')
+
+        # Check if file already exists
+        if os.path.isfile(filename):
+            raise FileExistsError
+
+        try:
+            # Store table into a csv file
+            CommandsEval.loaded_tables[table_name].to_csv(filename)
+        except:
+            raise Exception
+        finally:
+            print(f"Table {table_name} was successfully saved as {filename}")
+
 
     @staticmethod
     def present_table(table):
@@ -57,5 +84,4 @@ class CommandsEval:
     def is_csv(filename):
         """ Checks if file extension is csv """
 
-        print(filename[-4:])
         return True if filename[-4:] == '.csv' else False
