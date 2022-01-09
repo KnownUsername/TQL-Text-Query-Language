@@ -13,3 +13,7 @@ class CommandsGrammar:
     def p_save(self, p):
         """ q_save: SAVE TABLE var AS file """
         p[0] = {"op": p[1], "args": {"table": p[3], "file": p[5]}}
+
+    def p_show(self, p):
+        """ q_show: SHOW TABLE var """
+        p[0] = {"op": p[1], "args": {"table": p[3]}}
