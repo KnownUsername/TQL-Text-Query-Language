@@ -1,28 +1,27 @@
 
 import ply.lex as plex
-
+from ply.lex import TOKEN
 
 class CommandsLexer:
     """ Recognizes tokens of a TQL query """
 
     operations = ("LOAD", "DISCARD", "SAVE", "SHOW", "SELECT", "CREATE", "PROCEDURE")
-    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE")
+    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE", "USING", 'LIMIT')
 
     comparison_ch = ['>', '<', '=']
-    literals = ['*', ';', ','] + comparison_ch
+    literals = ['*', ';', ',', '(', ')'] + comparison_ch
 
-    tokens = operations + ("filename", "variable", "number",) + syntax
-    t_ignore = ' <= >= <>'
+    tokens = operations + ("file", "var", "nr",) + syntax
+    t_ignore = ' '
 
     def __init__(self):
         self.lexer = None
 
-    def process(self, string):
-        self.lexer = plex.lex(module=self)
-        self.lexer.input(string)
+    def build(self, **kwargs):
+        self.lexer = plex.lex(module=self, **kwargs)
 
-        for token in iter(self.lexer.token, None):
-            pass
+    def input(self, string):
+        self.lexer.input(string)
 
 
     #   --- Token Rules ---   #
@@ -32,26 +31,26 @@ class CommandsLexer:
         print(f"Unexpected tokens: {t.value[0:10]}")
         exit(1)
 
+    @TOKEN("|".join(operations))
     def t_operation(self, t):
-        r"LOAD|DISCARD|SAVE|SHOW|SELECT|CREATE|PROCEDURE"
         t.type = t.value
         return t
 
+    @TOKEN("|".join(syntax))
     def t_syntax(self, t):
-        r"AS|FROM|WHERE|DO|JOIN|TABLE"
         t.type = t.value
         return t
 
-    def t_filename(self, t):
+    def t_file(self, t):
         r'"[^<>:\"/\|?*]+"'
-        t.type = "filename"
+        t.type = "file"
         return t
 
-    def t_number(self, t):
+    def t_nr(self, t):
         r'[0-9]+(\.[0-9]+)?'
-        t.type = 'number'
+        t.value = float(t.value)
         return t
 
-    def t_variable(self,t):
+    def t_var(self, t):
         r"_[a-zA-Z0-9_@$]+ | [a-zA-Z][a-zA-Z0-9_@$]*"
         return t
