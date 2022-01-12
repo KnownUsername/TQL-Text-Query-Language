@@ -42,9 +42,8 @@ class CommandsLexer:
         return t
 
     def t_file(self, t):
-        r'"\.[\/[^<>:\"\/\|?*]+]+" | "[^<>:\"\/\|?*]+" '
+        r'"\.(\/[^<>:\"\/\|?*]+)+" | "[^<>:\"\/\|?*]+"'
         t.value = t.value[1:-1]
-        #t.type = "file"
         return t
 
     def t_nr(self, t):
