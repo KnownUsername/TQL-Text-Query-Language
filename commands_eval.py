@@ -6,9 +6,9 @@ class CommandsEval:
     loaded_tables = {}
 
     operators = {
-        "LOAD": lambda args, filename: CommandsEval._load(args),
+        "LOAD": lambda args: CommandsEval._load(args),
         "DISCARD": lambda args: CommandsEval._discard(args),
-        "SAVE": lambda args, filename: CommandsEval._save(args),
+        "SAVE": lambda args: CommandsEval._save(args),
         "SHOW": lambda args: CommandsEval._show(args),
         "CREATE": lambda args: args,
         "SELECT": lambda args: args
@@ -176,8 +176,7 @@ class CommandsEval:
         if 'op' in ast:
             op = ast["op"]
 
-            args = [arg for arg in ast['args']]
-
+            args = ast['args']
             if op in CommandsEval.operators:
                 func = CommandsEval.operators[op]
                 return func(args)
