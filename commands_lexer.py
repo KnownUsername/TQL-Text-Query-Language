@@ -11,8 +11,8 @@ class CommandsLexer:
     comparison_ch = ['>', '<', '=']
     literals = ['*', ';', ',', '(', ')'] + comparison_ch
 
-    tokens = operations + ("file", "var", "nr",) + syntax
-    t_ignore = ' '
+    tokens = operations + ("file", "var", "nr", "BE", 'LE', 'DIFFERENT', "IntNr",) + syntax
+    t_ignore = ' \n'
 
     def __init__(self):
         self.lexer = None
@@ -46,6 +46,11 @@ class CommandsLexer:
         t.value = t.value[1:-1]
         return t
 
+    def t_IntNr(self, t):
+        "[0-9]+"
+        t.value = int(t.value)
+        return t
+
     def t_nr(self, t):
         r'[0-9]+(\.[0-9]+)?'
         t.value = float(t.value)
@@ -53,4 +58,16 @@ class CommandsLexer:
 
     def t_var(self, t):
         r"_[a-zA-Z0-9_@$]+ | [a-zA-Z][a-zA-Z0-9_@$]*"
+        return t
+
+    def t_BE(self, t):
+        """>="""
+        return t
+
+    def t_LE(self, t):
+        '<='
+        return t
+
+    def t_DIFFERENT(self, t):
+        '<>'
         return t
