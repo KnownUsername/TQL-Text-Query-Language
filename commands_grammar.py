@@ -19,6 +19,17 @@ class CommandsGrammar:
         self.lexer.input(string)
         return self.yacc.parse(lexer=self.lexer.lexer)
 
+    def p_multiQuery(self, p):
+        """ multi_query : multi_query ';' query
+                       | query"""
+
+        # For only 1 var
+        if len(p) == 2:
+            p[0] = [p[1]]
+
+        else:
+            p[0] = [p[1]]
+            p[0].append(p[3])
 
     def p_query(self, p):
         """ query : q_load
@@ -83,7 +94,7 @@ class CommandsGrammar:
         """ var_columns : var_columns ',' var
                         | var """
 
-        # For only 1 var AND each var added, before comma
+        # For only 1 var
         if len(p) == 2:
             p[0] = [p[1]]
 
