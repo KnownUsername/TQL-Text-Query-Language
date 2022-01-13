@@ -48,58 +48,48 @@ class CommandsGrammar:
 
     def p_select(self, p):
         """ q_select : SELECT columns FROM var param_where param_lim """
-        p[0] = {'op': p[1], 'columns': p[2], 'table': p[4], 'params': [p[5], p[6]]}
+        p[0] = {'op': p[1], 'args': {'columns': p[2], 'table': p[4], 'params': {'where': p[5], 'limit': p[6]}}}
 
     def p_limit(self, p):
-        """ param_lim : LIMIT nr
+        """ param_lim : LIMIT IntNr
                      |"""
         if len(p) == 3:
-            p[0] = {'param': p[1], 'value': p[2]}
-        #else:
-        #    p[0] = p[1]
+            p[0] = p[2]
 
     def p_where(self, p):
         """ param_where : WHERE B
                         |"""
         if len(p) == 3:
-            p[0] = {'param': p[1], 'value': p[2]}
-        #else:
-        #    p[0] = p[1]
+            p[0] = p[2]
 
     def p_booleans(self, p):
         """ B : var '>' nr
              | var '<' nr
-             | var '>' '=' nr
-             | var '<' '=' nr
-             | var '<' '>' nr
+             | var BE nr
+             | var LE nr
+             | var DIFFERENT nr
              | var '=' nr
              | var '=' file
-             | var '<' '>' file
+             | var DIFFERENT file
         """
-
-        # For operators of 2 characters
-        if len(p) == 5:
-            p[0] = {'op': p[2]+p[3], 'args': {'column': p[1], 'value': p[4]}}
-
-        # For operators of 1 character
-        else:
-            p[0] = {'op': p[2], 'args': {'column': p[1], 'value': p[3]}}
+        p[0] = {'op': p[2], 'column': p[1], 'value': p[3]}
 
     def p_columns(self, p):
         """ columns : '*'
                     | var_columns """
-        p[0] = [p[1]]
+        p[0] = p[1]
 
-    def p_varColumns(self, p):
+    def p_varColumns0(self, p):
         """ var_columns : var_columns ',' var
                         | var """
 
         # For only 1 var AND each var added, before comma
         if len(p) == 2:
-            p[0].append(p[1])
+            p[0] = [p[1]]
 
         else:
-            p[0] = p[0].append(p[3])
+            p[0] = p[1]
+            p[0].append(p[3])
 
 
     def p_create(self, p):
