@@ -5,8 +5,8 @@ from ply.lex import TOKEN
 class CommandsLexer:
     """ Recognizes tokens of a TQL query """
 
-    operations = ("LOAD", "DISCARD", "SAVE", "SHOW", "SELECT", "CREATE", "PROCEDURE")
-    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE", "USING", 'LIMIT')
+    operations = ("LOAD", "DISCARD", "SAVE", "SHOW", "SELECT", "CREATE", "PROCEDURE", "CALL")
+    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE", "USING", 'LIMIT', 'END')
 
     comparison_ch = ['>', '<', '=']
     literals = ['*', ';', ',', '(', ')'] + comparison_ch
