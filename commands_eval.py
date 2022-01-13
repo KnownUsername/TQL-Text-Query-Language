@@ -1,5 +1,7 @@
 import pandas as pd
 import os.path
+from IPython.display import display
+
 
 class CommandsEval:
 
@@ -11,7 +13,7 @@ class CommandsEval:
         "SAVE": lambda args: CommandsEval._save(args),
         "SHOW": lambda args: CommandsEval._show(args),
         "CREATE": lambda args: args,
-        "SELECT": lambda args: args
+        "SELECT": lambda args: CommandsEval._select(args)
     }
 
 
@@ -57,8 +59,7 @@ class CommandsEval:
 
         # Store table on tables' dictionary
         CommandsEval.loaded_tables[table_name] = table
-
-        return True
+        print(f"Table '{table_name}' was successfully loaded")
 
     @staticmethod
     def _discard(args):
@@ -78,7 +79,8 @@ class CommandsEval:
         if table_name in CommandsEval.loaded_tables:
             # Removal of desired table
             del CommandsEval.loaded_tables[table_name]
-
+            print("Table removed with success!")
+            print(f"Current active tables: {CommandsEval.loaded_tables.keys()}")
         else:
             raise Exception('Table is not loaded')
 
@@ -99,7 +101,6 @@ class CommandsEval:
         # Table must be loaded - on tables' dictionary
         if table_name in CommandsEval.loaded_tables:
             print(CommandsEval.loaded_tables[table_name])
-        return True
 
     @staticmethod
     def _save(args):
@@ -108,18 +109,17 @@ class CommandsEval:
         # Check if fields exists
         try:
             table_name = args['table']
-        except KeyError:
-            raise KeyError(f'Table value was not found')
-
-        try:
             filename = args['file']
-        except KeyError:
-            raise KeyError(f' Filename was not found')
+        except KeyError as e:
+            raise KeyError(f'{e.args[0].capitalize()} value was not found on input')
 
 
+
+
+        table_name = 2
         # Check if there is only 1 value, that is a string
         if type(table_name) is not str:
-            raise TypeError("Table has invalid type")
+            raise TypeError(f"f{TypeError.args[0]} has invalid type")
         if type(filename) is not str:
             raise TypeError("Filename has invalid type")
 
@@ -145,6 +145,56 @@ class CommandsEval:
             raise Exception
         finally:
             print(f"Table {table_name} was successfully saved as {filename}")
+
+    @staticmethod
+    def _select(args):
+        """ Shows given table with parameters given.
+
+        These parameters could be:
+           - Slice of columns
+           - Filter of values
+           - Limited quantity of values presented
+        """
+
+        # Check if field exists
+        try:
+            columns = args['columns']
+            table = args['table']
+            where_parameter = args['params']['where']
+            limit_parameter = args['params']['limit']
+        except KeyError as e:
+            raise KeyError(f'{e.args[0].capitalize()} value was not found on input')
+
+        # Check if name of table, is already being used
+        if table not in CommandsEval.loaded_tables.keys():
+            raise Exception(f'Table "{table}" is not loaded')
+
+        # Check type of each variable
+
+        # Check if table exists  // Maybe add to try/except that's before it
+        original_table = CommandsEval.loaded_tables[table]
+        parameterized_table = original_table
+
+        # Check if there is any parameter for WHERE
+        if where_parameter:
+
+            # Variables assignment, for more readable code
+            operator = where_parameter['op']
+            column = where_parameter['column']
+            value = where_parameter['value']
+
+            # Apply condition, based on given operator
+            parameterized_table = CommandsEval._alternate_operator(parameterized_table, column, operator, value)
+
+        # Check if there is any parameter for LIMIT
+        if limit_parameter:
+            parameterized_table = parameterized_table[:limit_parameter]
+
+        # Filter columns
+        if columns != '*':
+            parameterized_table = parameterized_table.loc[:, columns]
+
+        display(parameterized_table)
 
 
     @staticmethod
@@ -184,3 +234,27 @@ class CommandsEval:
                 raise Exception(f"Unknown operator {op}")
 
         raise Exception('Undefined AST')
+
+    @staticmethod
+    def _alternate_operator(table, column, operator, value):
+        """ Apply condition, based on given operator """
+
+        if operator == '>':
+            parameterized_table = table[table[column] > value]
+
+        elif operator == '<':
+            parameterized_table = table[table[column] < value]
+
+        elif operator == '>=':
+            parameterized_table = table[table[column] >= value]
+
+        elif operator == '<=':
+            parameterized_table = table[table[column] <= value]
+
+        elif operator == '=':
+            parameterized_table = table[table[column] == value]
+
+        else:
+            parameterized_table = table[table[column] != value]
+
+        return parameterized_table
