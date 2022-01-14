@@ -6,7 +6,7 @@ class CommandsLexer:
     """ Recognizes tokens of a TQL query """
 
     operations = ("LOAD", "DISCARD", "SAVE", "SHOW", "SELECT", "CREATE", "PROCEDURE", "CALL")
-    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE", "USING", 'LIMIT', 'END')
+    syntax = ("AS", "FROM", "WHERE", "DO", "JOIN", "TABLE", "USING", 'LIMIT', 'END', 'AND', 'OR')
 
     comparison_ch = ['>', '<', '=']
     literals = ['*', ';', ',', '(', ')'] + comparison_ch
