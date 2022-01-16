@@ -220,6 +220,14 @@ class CommandsEval:
             # Storage of new table
             CommandsEval.loaded_tables[table_name] = new_table
 
+        elif source_op['op'] == 'SELECT':
+
+            # Take SELECT procedure on its method
+            new_table = CommandsEval._select(source_op['args'])
+
+            # Storage of new table
+            CommandsEval.loaded_tables[table_name] = new_table
+
 
     @staticmethod
     def present_table(table):
