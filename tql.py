@@ -1,9 +1,21 @@
-from commands_lexer import CommandsLexer
+from commands_grammar import CommandsGrammar
+from pprint import PrettyPrinter
+from commands_eval import CommandsEval
 
-cl = CommandsLexer()
+cg = CommandsGrammar()
+cg.build()
+
+
+pp = PrettyPrinter()
+
 
 for expr in iter(lambda: input(">> "), ""):
     try:
-        cl.process(expr)
+        ans = cg.parse(expr)
+        pp.pprint(ans)
+        answer = CommandsEval.evaluate(ans)
+        if answer is not None:
+            print(f"<< {answer}")
     except Exception as e:
-        print(f'\033[91m-> {e}\033[0m')
+        print(e)
+
