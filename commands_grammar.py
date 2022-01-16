@@ -1,3 +1,17 @@
+"""
+    Project: TQL-TEXT-QUERY-LANGUAGE
+    Purpose: Academical
+    Description: Defines valid expressions of its Language
+
+    Author: João Rodrigues
+    Student No.: 16928
+
+    Course: LESI
+    Subject: Languages Processing
+    College: IPCA
+    Academic year: 2021/2022
+"""
+
 from commands_lexer import CommandsLexer
 import ply.yacc as pyacc
 
@@ -124,9 +138,7 @@ class CommandsGrammar:
              | '(' COMPARISON Bool_Op COMPARISON ')'
         """
 
-        print(f'Actual: {p[0]}')
         if len(p) == 4:
-            print(f'p[0]: {p[0]} \n p[1]: {p[1]} \n p[2]: {p[2]} \n p[3]: {p[3]}')
             p[0] = {'op': p[2], 'conditions': [p[1], p[3]]}
 
         elif len(p) == 6:

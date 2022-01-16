@@ -1,3 +1,16 @@
+"""
+    Project: TQL-TEXT-QUERY-LANGUAGE
+    Purpose: Academical
+    Description:
+
+    Author: João Rodrigues
+    Student No.: 16928
+
+    Course: LESI
+    Subject: Languages Processing
+    College: IPCA
+    Academic year: 2021/2022
+"""
 from commands_grammar import CommandsGrammar
 from pprint import PrettyPrinter
 from commands_eval import CommandsEval

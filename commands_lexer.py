@@ -1,3 +1,16 @@
+"""
+    Project: TQL-TEXT-QUERY-LANGUAGE
+    Purpose: Academical
+    Description: Lexer rules
+
+    Author: João Rodrigues
+    Student No.: 16928
+
+    Course: LESI
+    Subject: Languages Processing
+    College: IPCA
+    Academic year: 2021/2022
+"""
 
 import ply.lex as plex
 from ply.lex import TOKEN

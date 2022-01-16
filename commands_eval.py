@@ -1,3 +1,17 @@
+"""
+    Project: TQL-TEXT-QUERY-LANGUAGE
+    Purpose: Academical
+    Description: Attributes function to expression received
+
+    Author: João Rodrigues
+    Student No.: 16928
+
+    Course: LESI
+    Subject: Languages Processing
+    College: IPCA
+    Academic year: 2021/2022
+"""
+
 import pandas as pd
 import os.path
 from IPython.display import display
@@ -160,7 +174,6 @@ class CommandsEval:
            - Limited quantity of values presented
         """
 
-        print("Reached eval method")
         # Check if field exists
         try:
             columns = args['columns']
@@ -242,16 +255,9 @@ class CommandsEval:
     @staticmethod
     def _call(procedure_name):
         """ Executes a stored procedure """
-        print("Code Reached")
 
         for query in CommandsEval.procedures[procedure_name]:
-            print(query)
             CommandsEval.evaluate(query)
-
-
-    @staticmethod
-    def present_table(table):
-        """ Presents table on console"""
 
     @staticmethod
     def is_csv(filename):
