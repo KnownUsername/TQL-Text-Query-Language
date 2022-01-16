@@ -68,13 +68,14 @@ class CommandsGrammar:
             p[0] = p[2]
 
     def p_where(self, p):
-        """ param_where : WHERE B
+        """ param_where : WHERE COMPARISON
                         |"""
         if len(p) == 3:
+            print(p[2])
             p[0] = p[2]
 
-    def p_booleans(self, p):
-        """ B : var '>' nr
+    def p_comparisons(self, p):
+        """ COMPARISON : var '>' nr
              | var '<' nr
              | var BE nr
              | var LE nr
@@ -82,15 +83,39 @@ class CommandsGrammar:
              | var '=' nr
              | var '=' file
              | var DIFFERENT file
+             | B
         """
-        p[0] = {'op': p[2], 'column': p[1], 'value': p[3]}
+        if len(p) == 4:
+            p[0] = {'op': p[2], 'column': p[1], 'value': p[3]}
+
+        else:
+            p[0] = p[1]
+
+    def p_booleans(self, p):
+        """ B : COMPARISON Bool_Op COMPARISON
+             | '(' COMPARISON Bool_Op COMPARISON ')'
+        """
+
+        print(f'Actual: {p[0]}')
+        if len(p) == 4:
+            print(f'p[0]: {p[0]} \n p[1]: {p[1]} \n p[2]: {p[2]} \n p[3]: {p[3]}')
+            p[0] = {'op': p[2], 'conditions': [p[1], p[3]]}
+
+
+        elif len(p) == 6:
+            p[0] = {'op': p[3], 'prioritized_conditions': [p[2], p[4]]}
+
+    def p_OP_bools(self, p):
+        """ Bool_Op : AND
+                    | OR """
+        p[0] = p[1]
 
     def p_columns(self, p):
         """ columns : '*'
                     | var_columns """
         p[0] = p[1]
 
-    def p_varColumns0(self, p):
+    def p_varColumns(self, p):
         """ var_columns : var_columns ',' var
                         | var """
 
