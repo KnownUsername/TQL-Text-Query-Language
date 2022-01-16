@@ -12,7 +12,7 @@ class CommandsEval:
         "DISCARD": lambda args: CommandsEval._discard(args),
         "SAVE": lambda args: CommandsEval._save(args),
         "SHOW": lambda args: CommandsEval._show(args),
-        "CREATE": lambda args: args,
+        "CREATE": lambda args: CommandsEval._create(args),
         "SELECT": lambda args: CommandsEval._select(args)
     }
 
@@ -156,6 +156,7 @@ class CommandsEval:
            - Limited quantity of values presented
         """
 
+        print("Reached eval method")
         # Check if field exists
         try:
             columns = args['columns']
@@ -195,6 +196,29 @@ class CommandsEval:
             parameterized_table = parameterized_table.loc[:, columns]
 
         display(parameterized_table)
+
+        return parameterized_table
+
+    @staticmethod
+    def _create(args):
+        """ Creates a new table from other tables """
+
+        # Retrieve primary data
+        table_name = args['result_table']
+        source_op = args['source']
+
+        # For JOIN clauses
+        if source_op['op'] == 'JOIN':
+
+            # Decompose JOIN variables
+            left_table, right_table = source_op['args']['tables']
+            join_column = source_op['args']['column']
+
+            # Join of two tables
+            new_table = CommandsEval._join(left_table, right_table, join_column)
+
+            # Storage of new table
+            CommandsEval.loaded_tables[table_name] = new_table
 
 
     @staticmethod
@@ -258,3 +282,10 @@ class CommandsEval:
             parameterized_table = table[table[column] != value]
 
         return parameterized_table
+
+    @staticmethod
+    def _join(left_table, right_table, join_column):
+        """ Joins 2 tables """
+
+        if isinstance(left_table, str) and isinstance(right_table, str):
+            return CommandsEval.loaded_tables[left_table].join(CommandsEval.loaded_tables[right_table], on = join_column, lsuffix = 'left_'+join_column, rsuffix = 'right_'+join_column)
