@@ -37,6 +37,9 @@ class CommandsGrammar:
                     | q_procedure """
         p[0] = p[1]
 
+    def p_call(self, p):
+        """ q_call : CALL var """
+        p[0] = {"op": p[1], "args": p[2]}
 
     def p_procedure(self, p):
         """ q_procedure : PROCEDURE var DO query_list ';' END """
@@ -50,6 +53,7 @@ class CommandsGrammar:
                   | q_show
                   | q_create
                   | q_select
+                  | q_call
                   """
         p[0] = p[1]
 
