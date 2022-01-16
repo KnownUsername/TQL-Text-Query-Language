@@ -6,6 +6,7 @@ from IPython.display import display
 class CommandsEval:
 
     loaded_tables = {}
+    procedures = {}
 
     operators = {
         "LOAD": lambda args: CommandsEval._load(args),
@@ -13,7 +14,10 @@ class CommandsEval:
         "SAVE": lambda args: CommandsEval._save(args),
         "SHOW": lambda args: CommandsEval._show(args),
         "CREATE": lambda args: CommandsEval._create(args),
-        "SELECT": lambda args: CommandsEval._select(args)
+        "SELECT": lambda args: CommandsEval._select(args),
+
+        "PROCEDURE": lambda args: CommandsEval._procedure(args),
+        "CALL": lambda args: CommandsEval._call(args)
     }
 
 
@@ -227,6 +231,22 @@ class CommandsEval:
 
             # Storage of new table
             CommandsEval.loaded_tables[table_name] = new_table
+
+    @staticmethod
+    def _procedure(args):
+        """ Creates a procedure -> a set of commands """
+
+        # Store queries into dictionary of procedures, with given procedure name
+        CommandsEval.procedures[args['procedure_name']] = args['queries']
+
+    @staticmethod
+    def _call(procedure_name):
+        """ Executes a stored procedure """
+        print("Code Reached")
+
+        for query in CommandsEval.procedures[procedure_name]:
+            print(query)
+            CommandsEval.evaluate(query)
 
 
     @staticmethod
