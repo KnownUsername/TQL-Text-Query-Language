@@ -19,9 +19,9 @@ class CommandsGrammar:
         self.lexer.input(string)
         return self.yacc.parse(lexer=self.lexer.lexer)
 
-    def p_multiQuery(self, p):
-        """ multi_query : multi_query ';' query
-                       | query"""
+    def p_prompt(self, p):
+        """ prompt : prompt ';' command
+                       | command """
 
         # For only 1 var
         if len(p) == 2:
@@ -30,6 +30,18 @@ class CommandsGrammar:
         else:
             p[0] = [p[1]]
             p[0].append(p[3])
+
+
+    def p_command(self, p):
+        """ command : query
+                    | q_procedure """
+        p[0] = p[1]
+
+
+    def p_procedure(self, p):
+        """ q_procedure : PROCEDURE var DO query_list ';' END """
+        p[0] = {'op': p[1], 'args': {'procedure_name': p[2], 'queries': p[4]}}
+
 
     def p_query(self, p):
         """ query : q_load
@@ -40,6 +52,18 @@ class CommandsGrammar:
                   | q_select
                   """
         p[0] = p[1]
+
+    def p_query_list(self, p):
+        """ query_list : query_list ';' query
+                       | query """
+
+        # For only 1 var
+        if len(p) == 2:
+            p[0] = [p[1]]
+
+        else:
+            p[0] = [p[1]]
+            p[0].append(p[3])
 
     def p_load(self, p):
         """ q_load : LOAD TABLE var FROM file """
@@ -100,7 +124,6 @@ class CommandsGrammar:
         if len(p) == 4:
             print(f'p[0]: {p[0]} \n p[1]: {p[1]} \n p[2]: {p[2]} \n p[3]: {p[3]}')
             p[0] = {'op': p[2], 'conditions': [p[1], p[3]]}
-
 
         elif len(p) == 6:
             p[0] = {'op': p[3], 'prioritized_conditions': [p[2], p[4]]}
